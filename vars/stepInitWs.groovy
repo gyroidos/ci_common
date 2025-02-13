@@ -15,6 +15,8 @@ def call(Map target = [:]) {
 
 	echo "Entering stepInitWs with parameters:\n\t workspace: ${target.workspace}\n\t manifest_path: ${target.manifest_path}\n\tmanifest_name: ${target.manifest_name}\n\tgyroid_arch: ${target.gyroid_arch}\n\tgyroid_machine: ${target.gyroid_machine}\n\tselector: ${buildParameter('BUILDSELECTOR')}\n\trebuild_previous: ${target.rebuild_previous}"
 
+	sh 'echo id: $(id)'
+
 	utilArchiveBuildNo(workspace: target.workspace, build_number: BUILD_NUMBER)
 
 	def artifact_build_no = utilGetArtifactBuildNo(workspace: target.workspace, selector: target.selector)
@@ -28,6 +30,7 @@ def call(Map target = [:]) {
 	stepWipeWs(target.workspace, target.manifest_path)
 
 	sh label: 'Repo init', script: """
+		ls -al ${target.workspace}/.manifests
 		cd ${target.workspace}/.manifests
 		git rev-parse --verify jenkins-ci && git branch -D jenkins-ci
 		git checkout -b "jenkins-ci"
